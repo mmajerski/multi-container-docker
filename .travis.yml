@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t unlmtd/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true unlmtd/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t unlmtd/multi-client ./client
+  - docker build -t unlmtd/multi-nginx ./nginx
+  - docker build -t unlmtd/multi-server ./server
+  - docker build -t unlmtd/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push images to the docker hub
+  - docker push unlmtd/multi-client
+  - docker push unlmtd/multi-nginx
+  - docker push unlmtd/multi-server
+  - docker push unlmtd/multi-worker
