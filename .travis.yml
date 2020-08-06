@@ -20,3 +20,16 @@ after_success:
   - docker push unlmtd/multi-nginx
   - docker push unlmtd/multi-server
   - docker push unlmtd/multi-worker
+
+deploy:
+  edge: true
+  provider: elasticbeanstalk
+  region: eu-central-1
+  app: multi-docker-2
+  env: MultiDocker2-env
+  bucket_name: elasticbeanstalk-eu-central-1-012153171837
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
